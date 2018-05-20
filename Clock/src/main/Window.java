@@ -1,5 +1,5 @@
 /**
- * <h1>Window Class</h1>
+ * <h1>Window class</h1>
  * 
  * <p>This class creates the window where all of 
  * the graphics are to be displayed.</p>

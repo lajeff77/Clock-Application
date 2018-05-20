@@ -1,5 +1,5 @@
 /**
- * <h1>Application Class</h1>
+ * <h1>Application class</h1>
  * 
  * <p>This class oversees the whole production of the application. It
  * manages all aspects of interaction and contains the thread for the
@@ -11,6 +11,9 @@
  * @author Lauryn Jefferson
  */
 package main;
+
+import states.LocalTimeState;
+import states.StateManager;
 
 public class Application implements Runnable
 {
@@ -58,23 +61,30 @@ public class Application implements Runnable
 		
 		//set conditions
 		running = false;
+		
+		//set the state
+		new StateManager(new LocalTimeState());
 	}
 	
 	public void run()
 	{
+		//setup
 		init();
-		int fps = 60;
-		double updateTime = 1000000000 / fps;
-		double change = 0;
-		long currentTime;
-		long beginningTime = System.nanoTime();
+		int fps = 60;//frames per second
+		double updateTime = 1000000000 / fps;//how many millis in between updates
+		double change = 0;//how many times we need to update
+		long currentTime;//what time were at when we enter the loop
+		long beginningTime = System.nanoTime();//the previous loop entry
 		
+		//application loop
 		while(running)
 		{
+			//update time status
 			currentTime = System.nanoTime();
 			change += (currentTime - beginningTime) / updateTime;
 			beginningTime = currentTime;
 			
+			//we need to update based on fps
 			if(change >= 1)
 			{
 				update();
@@ -135,7 +145,7 @@ public class Application implements Runnable
 	 */
 	private void update()
 	{
-		//update stuff
+		StateManager.update();
 	}
 	
 	/**
@@ -147,11 +157,11 @@ public class Application implements Runnable
 	 */
 	private void render()
 	{
-		//render stuff
+		StateManager.render(Window.getCanvas().getGraphics());
 	}
 	
 	/**
-	 * <h1>AlreadyRunningException Class</h1>
+	 * <h1>AlreadyRunningException class</h1>
 	 * 
 	 * <p>An exception that deals with when the user attempts 
 	 * to run the thread when its already running.</p>
