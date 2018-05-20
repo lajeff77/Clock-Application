@@ -1,5 +1,5 @@
 /**
- * <h1>Launcher Class</h1>
+ * <h1>Launcher class</h1>
  * 
  * <p>This class is the launching point for the whole project.</p>
  * 
@@ -24,8 +24,8 @@ public class Launcher
 	 */
 	public static void main(String[] args)
 	{
-		//sets up application with window size of 1920 by 1080
-		Application clockApp = new Application(1920,1080);
+		//sets up application with a title and window size of 640 by 480
+		Application clockApp = new Application("Clock Application",640,480);
 		
 		
 		//hands over the duties to the clock application thread

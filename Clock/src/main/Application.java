@@ -1,5 +1,6 @@
 /**
- * <h1>Application class</h1>
+ * <h1>Application Class</h1>
+ * 
  * <p>This class oversees the whole production of the application. It
  * manages all aspects of interaction and contains the thread for the
  * application.</p>
@@ -18,6 +19,7 @@ public class Application implements Runnable
 	private static final int DEFAULT_HEIGHT = 800;
 	
 	//objects
+	private String title;
 	private Thread thread;
 	
 	//variables
@@ -33,7 +35,7 @@ public class Application implements Runnable
 	 */
 	public Application()
 	{
-		this(DEFAULT_WIDTH,DEFAULT_HEIGHT);
+		this("Applictaion",DEFAULT_WIDTH,DEFAULT_HEIGHT);
 	}
 	
 	/**
@@ -45,8 +47,11 @@ public class Application implements Runnable
 	 * @param width width of window
 	 * @param height height of window
 	 */
-	public Application(int width, int height)
+	public Application(String title, int width, int height)
 	{
+		//set title
+		this.title = title;
+		
 		//set window width and height
 		this.width = width;
 		this.height = height;
@@ -88,7 +93,8 @@ public class Application implements Runnable
 	 */
 	private void init()
 	{
-		//Initialize stuff
+		//don't need to make an object for window because it's static
+		new Window(title, width, height);
 	}
 	
 	/**
@@ -145,7 +151,7 @@ public class Application implements Runnable
 	}
 	
 	/**
-	 * <h1>AlreadyRunningException class</h1>
+	 * <h1>AlreadyRunningException Class</h1>
 	 * 
 	 * <p>An exception that deals with when the user attempts 
 	 * to run the thread when its already running.</p>
