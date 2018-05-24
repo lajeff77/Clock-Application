@@ -4,7 +4,7 @@
  * <p>This class is the launching point for the whole project.</p>
  * 
  * <p>Created:5/19/18</p>
- * @version 5/19/18
+ * @version 5/23/18
  * 
  * @author Lauryn Jefferson
  */
@@ -24,8 +24,8 @@ public class Launcher
 	 */
 	public static void main(String[] args)
 	{
-		//sets up application with a title and window size of 640 by 480
-		Application clockApp = new Application("Clock Application",640,480);
+		//sets up application with a title and window size of 800 by 600
+		Application clockApp = new Application("Clock Application",800,600);
 		
 		
 		//hands over the duties to the clock application thread

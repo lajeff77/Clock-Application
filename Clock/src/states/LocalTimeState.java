@@ -5,16 +5,28 @@
  * local time in the application.</p>
  * 
  * <p>Created 5/20/18</p>
- * @version 5/20/18
+ * @version 5/23/18
  * 
  * @author Lauryn Jefferson
  */
 package states;
 
+import java.awt.Color;
 import java.awt.Graphics;
+
+import graphics.Clock;
+import main.Window;
 
 public class LocalTimeState implements State
 {
+	private Clock localClock;
+	private Color backgroundColor;
+	
+	public LocalTimeState()
+	{
+		localClock = new Clock();
+		backgroundColor = new Color(220,220,222);
+	}
 
 	/**
 	 * <h2>update() method</h2>
@@ -25,8 +37,7 @@ public class LocalTimeState implements State
 	@Override
 	public void update() 
 	{
-		// TODO Auto-generated method stub
-
+		localClock.update();
 	}
 
 	/**
@@ -40,8 +51,12 @@ public class LocalTimeState implements State
 	@Override
 	public void render(Graphics g) 
 	{
-		// TODO Auto-generated method stub
-
+		//background
+		g.setColor(backgroundColor);
+		g.fillRect(0, 0, Window.getWidth(), Window.getHeight());
+		
+		//clock
+		localClock.render(g);
 	}
 
 }

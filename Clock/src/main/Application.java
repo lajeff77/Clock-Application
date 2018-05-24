@@ -12,6 +12,10 @@
  */
 package main;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
+
 import states.LocalTimeState;
 import states.StateManager;
 
@@ -24,6 +28,8 @@ public class Application implements Runnable
 	//objects
 	private String title;
 	private Thread thread;
+	private BufferStrategy bs;
+	private Graphics g;
 	
 	//variables
 	private int width, height;//for window dimensions
@@ -61,9 +67,7 @@ public class Application implements Runnable
 		
 		//set conditions
 		running = false;
-		
-		//set the state
-		new StateManager(new LocalTimeState());
+
 	}
 	
 	public void run()
@@ -103,8 +107,8 @@ public class Application implements Runnable
 	 */
 	private void init()
 	{
-		//don't need to make an object for window because it's static
-		new Window(title, width, height);
+		//don't need to make references because window and state manager are static
+		new StateManager(new Window(title, width, height), new LocalTimeState());
 	}
 	
 	/**
@@ -145,7 +149,8 @@ public class Application implements Runnable
 	 */
 	private void update()
 	{
-		StateManager.update();
+		if(StateManager.getState() != null)
+			StateManager.update();
 	}
 	
 	/**
@@ -157,7 +162,24 @@ public class Application implements Runnable
 	 */
 	private void render()
 	{
-		StateManager.render(Window.getCanvas().getGraphics());
+		bs = Window.getCanvas().getBufferStrategy();
+		if(bs == null)
+		{
+			Window.getCanvas().createBufferStrategy(3);
+			return;
+		}
+		
+		g = bs.getDrawGraphics();
+		
+		//clear screen
+		g.clearRect(0, 0, Window.getWidth(), Window.getHeight());
+		
+		//draw here
+		if(StateManager.getState() != null)
+			StateManager.render(g);
+		
+		bs.show();
+		g.dispose();
 	}
 	
 	/**
