@@ -6,13 +6,12 @@
  * application.</p>
  * 
  * <p>Created:5/19/18</p>
- * @version 5/19/18
+ * @version 5/28/18
  * 
  * @author Lauryn Jefferson
  */
 package main;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
@@ -108,7 +107,13 @@ public class Application implements Runnable
 	private void init()
 	{
 		//don't need to make references because window and state manager are static
-		new StateManager(new Window(title, width, height), new LocalTimeState());
+		
+		new Window(title, width, height);
+		new MenuBar();
+		MouseManager mm = new MouseManager();
+		Window.getCanvas().addMouseListener(mm);
+		Window.getCanvas().addMouseMotionListener(mm);
+		new StateManager(new LocalTimeState());
 	}
 	
 	/**
@@ -151,6 +156,8 @@ public class Application implements Runnable
 	{
 		if(StateManager.getState() != null)
 			StateManager.update();
+		MenuBar.update();
+		MouseManager.update();
 	}
 	
 	/**
@@ -177,6 +184,7 @@ public class Application implements Runnable
 		//draw here
 		if(StateManager.getState() != null)
 			StateManager.render(g);
+		MenuBar.render(g);
 		
 		bs.show();
 		g.dispose();

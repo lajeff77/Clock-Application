@@ -8,7 +8,7 @@
  * object for the GUI implementation.</p>
  * 
  * <p>Created: 5/20/18</p>
- * @version 5/24/18
+ * @version 5/29/18
  * 
  * @author Lauryn Jefferson
  */
@@ -25,17 +25,18 @@ import java.util.TimeZone;
 
 import main.Window;
 
-public class Clock 
+public class Clock
 {
 	//constants
-	private final static int DEFAULT_WIDTH = 400;
-	private final static int DEFAULT_HEIGHT = 400;
+	private final static int DEFAULT_WIDTH = 300;
+	private final static int DEFAULT_HEIGHT = 300;
 	
 	//objects 
 	private Color hourColor, minuteColor, secondColor;
 	private ZonedDateTime time;
 	private String hour,minute,second;
 	private String date, zone, zoneDisplay;
+	private String period;
 	
 	//variables
 	private int centerX, centerY;
@@ -44,7 +45,7 @@ public class Clock
 	private int clockWidth, clockHeight;
 	private double ratio;
 	private double hourAngle, minuteAngle, secondAngle;
-	private boolean oneColor, digitalDisplay, plain;
+	private boolean oneColor, digitalDisplay, plain, shadows;
 	private int hourRadius, minuteRadius, secondRadius;
 	
 	/**
@@ -92,7 +93,10 @@ public class Clock
 	public Clock(String zone,int centerX, int centerY, int clockWidth, int clockHeight)
 	{
 		//set zone time
-		this.time = ZonedDateTime.now(TimeZone.getTimeZone(ZoneId.of(zone)).toZoneId());
+		if(ZoneId.getAvailableZoneIds().contains(zone))
+			this.time = ZonedDateTime.now(TimeZone.getTimeZone(zone).toZoneId());
+		else
+			this.time = ZonedDateTime.now(TimeZone.getTimeZone(ZoneId.of(zone)).toZoneId());
 		
 		this.zone = zone;
 		
@@ -120,13 +124,15 @@ public class Clock
 		secondColor = new Color(191,33,47);
 		
 		//set clock hand radiuses
-		hourRadius  = 130;
-		minuteRadius = 170;
-		secondRadius = 180;
+		hourRadius  = (int)(130 * clockWidth/400.0);
+		minuteRadius = (int)(170 * clockWidth/400.0);
+		secondRadius = (int)(180 * clockWidth/400.0);
 		
 		//set clock properties
 		oneColor = false;
 		digitalDisplay = true;
+		plain = false;
+		shadows = true;
 	}
 	
 	/**
@@ -170,6 +176,7 @@ public class Clock
 		int hr = (int)(hourRadius * ratio);
 		int mr = (int)(minuteRadius * ratio);
 		int sr = (int)(secondRadius * ratio);
+	
 		//set font based on ratio
 		g.setFont(new Font("Brussels",1 ,fontSize));
 		//font width and heights
@@ -199,8 +206,18 @@ public class Clock
 		{
 			//new font
 			g.setFont(new Font("Arial",1,fontSize1));
-
+			
+			if(shadows)
+			{
+				//draw box
+				g.setColor(new Color(255,255,255,153));
+				if(g.getFontMetrics().stringWidth(date) > g.getFontMetrics().stringWidth(zoneDisplay))
+					g.fillRect(cx - g.getFontMetrics().stringWidth(date)/2 - spacing, cy - ch/2 - sh1*3 - spacing*2, g.getFontMetrics().stringWidth(date) + spacing*2 ,sh1*2 + spacing*4);
+				else
+					g.fillRect(cx - g.getFontMetrics().stringWidth(zoneDisplay)/2 - spacing, cy - ch/2 - sh1*3 - spacing*2, g.getFontMetrics().stringWidth(zoneDisplay) + spacing*2 ,sh1*2 + spacing*4);
+			}
 			//draw the time zone
+			g.setColor(Color.BLACK);
 			g.drawString(zoneDisplay, cx - g.getFontMetrics().stringWidth(zoneDisplay)/2, cy - ch/2 - sh1*2 - spacing);
 
 			//draw what day it is
@@ -211,28 +228,42 @@ public class Clock
 
 			//display of the time in numerical form
 			if(digitalDisplay)
-			{
+			{	
+				if(shadows)
+				{
+					//draw box
+					g.setColor(new Color(255,255,255,153));
+					g.fillRect(cx - g.getFontMetrics().stringWidth(minute)- (g.getFontMetrics().stringWidth(":")*3)/2 - g.getFontMetrics().stringWidth(hour) - spacing,cy + ch/2 + sh - spacing*3,g.getFontMetrics().stringWidth(minute)+ g.getFontMetrics().stringWidth(":") * 2 + g.getFontMetrics().stringWidth(" ")+ g.getFontMetrics().stringWidth(hour) + g.getFontMetrics().stringWidth(second)+ g.getFontMetrics().stringWidth(period) + spacing*2, sh + spacing*2);
+				}
 				//hour
 				g.setColor(hourColor);
-				g.drawString(hour, cx - g.getFontMetrics().stringWidth(minute)/2 - g.getFontMetrics().stringWidth(":") - g.getFontMetrics().stringWidth(hour),cy + ch/2 + sh + spacing);
+				g.drawString(hour, cx - g.getFontMetrics().stringWidth(minute) - (g.getFontMetrics().stringWidth(":")*3)/2 - g.getFontMetrics().stringWidth(hour),cy + ch/2 + sh + spacing);
 				g.setColor(Color.BLACK);
-				g.drawString(":", cx - g.getFontMetrics().stringWidth(minute)/2 - g.getFontMetrics().stringWidth(":") , cy + ch/2 + sh + spacing);
+				g.drawString(":", cx - g.getFontMetrics().stringWidth(minute) - (g.getFontMetrics().stringWidth(":")*3)/2 , cy + ch/2 + sh + spacing);
 				
 				//minute
 				if(!oneColor)
 					g.setColor(minuteColor);
 				else
 					g.setColor(hourColor);
-				g.drawString(minute, cx - g.getFontMetrics().stringWidth(minute)/2,cy + ch/2 + sh + spacing);
+				g.drawString(minute, cx - g.getFontMetrics().stringWidth(minute) - g.getFontMetrics().stringWidth(":")/2,cy + ch/2 + sh + spacing);
 				g.setColor(Color.BLACK);
-				g.drawString(":",  cx + g.getFontMetrics().stringWidth(minute)/2, cy + ch/2 + sh + spacing);
+				g.drawString(":",  cx - g.getFontMetrics().stringWidth(":")/2, cy + ch/2 + sh + spacing);
 				
 				//second
 				if(!oneColor)
 					g.setColor(secondColor);
 				else
 					g.setColor(hourColor);
-				g.drawString(second, cx + g.getFontMetrics().stringWidth(minute)/2 + g.getFontMetrics().stringWidth(":"),cy + ch/2 + sh + spacing);
+				g.drawString(second, cx + g.getFontMetrics().stringWidth(":")/2,cy + ch/2 + sh + spacing);
+				
+				//period
+				if(!oneColor)
+					g.setColor(Color.BLACK);
+				else
+					g.setColor(hourColor);
+				g.drawString(" " + period,cx+ g.getFontMetrics().stringWidth(":")/2 + g.getFontMetrics().stringWidth(second), cy + ch/2 + sh + spacing);
+				
 			}
 		}
 		
@@ -274,9 +305,15 @@ public class Clock
 	private void setStrings()
 	{
 		//convert hour into 12s
+		period = "AM";
 		int temp = time.getHour();
 		if(temp > 12)
+		{
 			temp -=12;
+			period = "PM";
+		}
+		if(temp == 0)
+			temp = 12;
 		//set hour
 		hour =  Integer.toString(temp);
 		
@@ -351,6 +388,36 @@ public class Clock
 	}
 	
 	/**
+	 * <h2>getTimeOfDay()</h2>
+	 * 
+	 * <p>This method determines what time of day it
+	 * is based on what hour of the day it is. It will
+	 * return morning, day, evening, or night.</p>
+	 * 
+	 * @return time of day
+	 */
+	public String getTimeOfDay()
+	{
+		String tod;
+		int hour = time.getHour();
+		if(hour < 5)
+			tod = "night";
+		else
+			if(hour < 10)
+				tod = "morning";
+			else
+				if(hour < 16)
+					tod = "day";
+				else
+					if(hour < 20 )
+						tod = "evening";
+					else 
+						tod = "night";
+		return tod;
+	}
+	
+	
+	/**
 	 * <h2>setOneColor() method</h2>
 	 * 
 	 * <p>This method will set the property of the
@@ -389,11 +456,25 @@ public class Clock
 	 * includes all of the details such as time zone and date.
 	 * This property is set to not plain on default.</p>
 	 * 
-	 * @param plain
+	 * @param plain whether or not the clock is plain
 	 */
 	public void setPlain(boolean plain)
 	{
 		this.plain = plain;
+	}
+	
+	/**
+	 * <h2>setShadows() method<h2>
+	 * 
+	 * <p>This method will determine if the display of the
+	 * time zone, date, and digital will have a white shadow 
+	 * behind it. The default is set to have shadows.</h2>
+	 * 
+	 * @param shadows whether or not the text is shadowed
+	 */
+	public void setShadows(boolean shadows)
+	{
+		this.shadows = shadows;
 	}
 	
 	/**
@@ -423,6 +504,7 @@ public class Clock
 		digitalDisplay = !digitalDisplay;
 	}
 	
+	
 	/**
 	 * <h2>togglePlain() method</h2>
 	 * 
@@ -433,6 +515,18 @@ public class Clock
 	public void togglePlain()
 	{
 		plain = !plain;
+	}
+	
+	/**
+	 * <h2>toggleShadows() method</h2>
+	 * 
+	 * <p>This method flips whether the text has shadows 
+	 * underneath it or not. If he text has a shadow box
+	 * this method will turn it off and vice versa.</h2>
+	 */
+	public void toggleShadows()
+	{
+		shadows = !shadows;
 	}
 	
 	/**
@@ -481,5 +575,28 @@ public class Clock
 	public void setSecondColor(Color secondColor)
 	{
 		this.secondColor = secondColor;
+	}
+	
+	/**
+	 * <h2>compareTo method</h2>
+	 * 
+	 * <p>This method compares the times of this clock
+	 * and another clock. Just as a standard compareTo() 
+	 * method works, this method returns - if this clock is 
+	 * less than, + if this clock is greater than, and 0 if this
+	 * clock is equal to.</p>
+	 * 
+	 * @param otherClock clock to compare this to
+	 * 
+	 * @return greater(+), less(-), or equal(0)
+	 */
+	public int compareTo(Clock otherClock)
+	{
+		if(this.zone.equals(otherClock.zone) || this.time.getHour() == otherClock.time.getHour() && this.time.getDayOfYear() == this.time.getDayOfYear())
+			return 0;
+		if(this.time.getDayOfYear() != otherClock.time.getDayOfYear())
+			return this.time.getDayOfYear() - otherClock.time.getDayOfYear();
+		
+		return this.time.getHour() - otherClock.time.getHour();
 	}
 }

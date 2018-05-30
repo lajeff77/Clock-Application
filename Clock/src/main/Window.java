@@ -5,7 +5,7 @@
  * the graphics are to be displayed.</p>
  * 
  * <p>Created:5/19/18</p>
- * @version 5/19/18
+ * @version 5/26/18
  * 
  * @author Lauryn Jefferson
  */
@@ -15,6 +15,8 @@ import java.awt.Canvas;
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
+
+import images.ResourceLoader;
 
 public class Window 
 {
@@ -59,10 +61,10 @@ public class Window
 		frame = new JFrame(title);
 		frame.setSize(width, height);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(true);
+		frame.setResizable(false);
 		frame.setVisible(true);
 		
-		//frame.setIconImage(Assets.icon);
+		frame.setIconImage(ResourceLoader.getImage("/images/icon.png"));
 		
 		//create canvas
 		canvas = new Canvas();

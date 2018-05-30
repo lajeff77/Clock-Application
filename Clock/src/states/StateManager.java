@@ -7,7 +7,7 @@
  * and render the current state.</p>
  * 
  * <p>Created: 5/19/18</p>
- * @version 5/20/18
+ * @version 5/27/18
  * 
  * @author Lauryn Jefferson
  */
@@ -15,13 +15,10 @@ package states;
 
 import java.awt.Graphics;
 
-import main.Window;
-
 public class StateManager 
 {
 	//objects
 	private static State currentState;//keeps track of what state we are in
-	private static Window window;
 	
 	/**
 	 * <h2>StateManager() constructor</h2>
@@ -31,9 +28,9 @@ public class StateManager
 	 * before rendering and updating or nothing will 
 	 * result.</p>
 	 */
-	public StateManager(Window window)
+	public StateManager()
 	{
-		this(window,null);
+		this(null);
 	}
 	
 	/**
@@ -44,10 +41,9 @@ public class StateManager
 	 * 
 	 * @param currentState
 	 */
-	public StateManager(Window window,State currentState)
+	public StateManager(State currentState)
 	{
 		StateManager.currentState = currentState;
-		StateManager.window = window;
 	}
 	
 	/**
@@ -103,16 +99,4 @@ public class StateManager
 		return currentState;
 	}
 	
-	/**
-	 * <h2>getWindow() method</h2>
-	 * 
-	 * <p>This method returns the Window that the 
-	 * application writes to and all the states are
-	 * displayed on.</h2>
-	 * @return
-	 */
-	public static Window getWindow()
-	{
-		return window;
-	}
 }
